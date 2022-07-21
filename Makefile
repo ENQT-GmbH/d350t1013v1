@@ -1,4 +1,4 @@
-obj-m += tmate_baseboard.o
+obj-m += panel-dxwy-d350t1013v1.o
 
 all:
 	make -C ${LINUX_DIR} M=$(PWD) modules
