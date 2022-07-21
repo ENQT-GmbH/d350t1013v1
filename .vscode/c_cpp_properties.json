@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/../../build-netztester2/build/linux-custom/include/",
+                "${workspaceFolder}/../../build-netztester2/build/linux-custom/arch/arm64/include/",
+                "${workspaceFolder}/../../build-netztester2/build/linux-custom/arch/arm64/include/generated",
+                "${workspaceFolder}/../../build-netztester2/build/linux-custom/arch/arm64/mach-s3c24xx/include"
+            ],
+            "defines": [],
+            "cStandard": "c11",
+            "intelliSenseMode": "gcc-arm64"
+        }
+    ],
+    "version": 4
+}
