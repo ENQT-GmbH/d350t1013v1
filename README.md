@@ -1,4 +1,4 @@
-# 深圳市大显伟业科技有限公司 D350T1013V1 LCD panel
+# D350T1013V1 LCD panel
 
 This provides a Linux driver for the D350T1013V1 LCD panel manufactured by 深圳市大显伟业科技有限公司.
 
