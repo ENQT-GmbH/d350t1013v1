@@ -120,15 +120,11 @@ static int d350t1013v1_prepare(struct drm_panel *panel)
 	int ret;
 	u8 ids[3];
 
-	dev_info(panel->dev, "d350t1013v1 prepare 10\n");
-
-	dev_info(panel->dev, "d350t1013v1 regulator\n");
 	ret = regulator_bulk_enable(d350t1013v1->desc->num_supplies,
 				    d350t1013v1->supplies);
 	if (ret < 0)
 		return ret;
 
-	dev_info(panel->dev, "d350t1013v1 reset\n");
 	gpiod_set_value(d350t1013v1->reset, 0);
 	msleep(150);
 	gpiod_set_value(d350t1013v1->reset, 1);
@@ -161,7 +157,6 @@ static int d350t1013v1_enable(struct drm_panel *panel)
 {
 	struct d350t1013v1 *d350t1013v1 = panel_to_d350t1013v1(panel);
 
-	dev_info(panel->dev, "d350t1013v1 enable\n");
 	return mipi_dsi_dcs_set_display_on(d350t1013v1->dsi);
 }
 
@@ -169,7 +164,6 @@ static int d350t1013v1_disable(struct drm_panel *panel)
 {
 	struct d350t1013v1 *d350t1013v1 = panel_to_d350t1013v1(panel);
 
-	dev_info(panel->dev, "d350t1013v1 disable\n");
 	return mipi_dsi_dcs_set_display_off(d350t1013v1->dsi);
 }
 
@@ -177,8 +171,6 @@ static int d350t1013v1_unprepare(struct drm_panel *panel)
 {
 	struct d350t1013v1 *d350t1013v1 = panel_to_d350t1013v1(panel);
 	int ret;
-
-	dev_info(panel->dev, "d350t1013v1 unprepare\n");
 
 	ret = mipi_dsi_dcs_enter_sleep_mode(d350t1013v1->dsi);
 	if (ret < 0)
@@ -223,7 +215,7 @@ static const struct drm_panel_funcs d350t1013v1_funcs = {
 };
 
 static const struct drm_display_mode d350t1013v1_mode = {
-	.clock 			= 1000,
+	.clock 			= 25760,
 
 	.hdisplay		= 480,
 	.hsync_start	= 480 + 18,
@@ -261,8 +253,6 @@ static int d350t1013v1_dsi_probe(struct mipi_dsi_device *dsi)
 	struct d350t1013v1 *d350t1013v1;
 	int ret, i;
 
-	dev_info(&dsi->dev, "d350t1013v1 probe version 2\n");
-
 	d350t1013v1 = devm_kzalloc(&dsi->dev, sizeof(*d350t1013v1), GFP_KERNEL);
 	if (!d350t1013v1)
 		return -ENOMEM;
@@ -281,24 +271,20 @@ static int d350t1013v1_dsi_probe(struct mipi_dsi_device *dsi)
 	for (i = 0; i < desc->num_supplies; i++)
 		d350t1013v1->supplies[i].supply = desc->supply_names[i];
 
-	dev_info(&dsi->dev, "d350t1013v1 probe: regulator\n");
 	ret = devm_regulator_bulk_get(&dsi->dev, desc->num_supplies,
 				      d350t1013v1->supplies);
 	if (ret < 0)
 		return ret;
 
-	dev_info(&dsi->dev, "d350t1013v1 probe: reset\n");
 	d350t1013v1->reset = devm_gpiod_get(&dsi->dev, "reset", GPIOD_OUT_LOW);
 	if (IS_ERR(d350t1013v1->reset)) {
 		dev_err(&dsi->dev, "Couldn't get our reset GPIO\n");
 		return PTR_ERR(d350t1013v1->reset);
 	}
 
-	dev_info(&dsi->dev, "d350t1013v1 probe: panel init\n");
 	drm_panel_init(&d350t1013v1->panel, &dsi->dev, &d350t1013v1_funcs,
 		       DRM_MODE_CONNECTOR_DSI);
 
-	dev_info(&dsi->dev, "d350t1013v1 probe: backlight\n");
 	ret = drm_panel_of_backlight(&d350t1013v1->panel);
 	if (ret)
 		return ret;
@@ -309,16 +295,12 @@ static int d350t1013v1_dsi_probe(struct mipi_dsi_device *dsi)
 	d350t1013v1->dsi = dsi;
 	d350t1013v1->desc = desc;
 
-	dev_info(&dsi->dev, "d350t1013v1 probe done 2\n");
-
 	return mipi_dsi_attach(dsi);
 }
 
 static int d350t1013v1_dsi_remove(struct mipi_dsi_device *dsi)
 {
 	struct d350t1013v1 *d350t1013v1 = mipi_dsi_get_drvdata(dsi);
-
-	dev_info(&dsi->dev, "d350t1013v1 remove\n");
 
 	mipi_dsi_detach(dsi);
 	drm_panel_remove(&d350t1013v1->panel);
