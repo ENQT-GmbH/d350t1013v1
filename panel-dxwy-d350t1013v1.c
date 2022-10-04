@@ -218,9 +218,9 @@ static const struct drm_display_mode d350t1013v1_mode = {
 	.clock 			= 25760,
 
 	.hdisplay		= 480,
-	.hsync_start	= 480 + 18,
-	.hsync_end		= 480 + 18 + 16,
-	.htotal			= 480 + 18 + 16 + 2,
+	.hsync_start	= 480 + 50,
+	.hsync_end		= 480 + 50 + 16,
+	.htotal			= 480 + 50 + 16 + 2,
 
 	.vdisplay		= 800,
 	.vsync_start	= 800 + 16,
