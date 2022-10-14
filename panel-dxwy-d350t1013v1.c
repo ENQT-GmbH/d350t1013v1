@@ -215,7 +215,7 @@ static const struct drm_panel_funcs d350t1013v1_funcs = {
 };
 
 static const struct drm_display_mode d350t1013v1_mode = {
-	.clock 			= 25760,
+	.clock 			= 12500,
 
 	.hdisplay		= 480,
 	.hsync_start	= 480 + 50,
