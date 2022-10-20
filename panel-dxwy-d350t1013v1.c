@@ -238,7 +238,7 @@ module_param(clock, uint, 0);
 
 static uint hsync_start = 480 + 50;
 module_param(hsync_start, uint, 0);
-static uint hsync_end = 480 + 40 + 16;
+static uint hsync_end = 480 + 50 + 16;
 module_param(hsync_end, uint, 0);
 static uint htotal = 480 + 50 + 16 + 2;
 module_param(htotal, uint, 0);
