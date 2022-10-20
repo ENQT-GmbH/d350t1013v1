@@ -214,8 +214,8 @@ static const struct drm_panel_funcs d350t1013v1_funcs = {
 	.get_modes	= d350t1013v1_get_modes,
 };
 
-static const struct drm_display_mode d350t1013v1_mode = {
-	.clock 			= 12500,
+static struct drm_display_mode d350t1013v1_mode = {
+	.clock 			= 25000,
 
 	.hdisplay		= 480,
 	.hsync_start	= 480 + 50,
@@ -232,6 +232,23 @@ static const struct drm_display_mode d350t1013v1_mode = {
 
 	.type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
 };
+
+static uint clock = 25000;
+module_param(clock, uint, 0);
+
+static uint hsync_start = 480 + 50;
+module_param(hsync_start, uint, 0);
+static uint hsync_end = 480 + 40 + 16;
+module_param(hsync_end, uint, 0);
+static uint htotal = 480 + 50 + 16 + 2;
+module_param(htotal, uint, 0);
+
+static uint vsync_start = 800 + 16;
+module_param(vsync_start, uint, 0);
+static uint vsync_end = 800 + 16 + 14;
+module_param(vsync_end, uint, 0);
+static uint vtotal = 800 + 16 + 14 + 2;
+module_param(vtotal, uint, 0);
 
 static const char * const d350t1013v1_supply_names[] = {
 	"vcc",
@@ -256,6 +273,20 @@ static int d350t1013v1_dsi_probe(struct mipi_dsi_device *dsi)
 	d350t1013v1 = devm_kzalloc(&dsi->dev, sizeof(*d350t1013v1), GFP_KERNEL);
 	if (!d350t1013v1)
 		return -ENOMEM;
+
+	d350t1013v1_mode.clock = clock;
+	d350t1013v1_mode.hsync_start = hsync_start;
+	d350t1013v1_mode.hsync_end = hsync_end;
+	d350t1013v1_mode.htotal = htotal;
+	d350t1013v1_mode.vsync_start = vsync_start;
+	d350t1013v1_mode.vsync_end = vsync_end;
+	d350t1013v1_mode.vtotal = vtotal;
+
+	dev_info(&dsi->dev, "clock=%d hsync_start=%d hsync_end=%d htotal=%d vsync_start=%d vsync_end=%d vtotal=%d\n",
+		d350t1013v1_mode.clock, 
+		d350t1013v1_mode.hsync_start, d350t1013v1_mode.hsync_end, d350t1013v1_mode.htotal,
+		d350t1013v1_mode.vsync_start, d350t1013v1_mode.vsync_end, d350t1013v1_mode.vtotal
+	);
 
 	desc = of_device_get_match_data(&dsi->dev);
 	dsi->mode_flags = desc->flags;
