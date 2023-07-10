@@ -48,6 +48,7 @@ static inline int d350t1013v1_dsi_write(struct d350t1013v1 *d350t1013v1, const v
 	{ \
 		const u8 d[] = { seq };	\
 		d350t1013v1_dsi_write(d350t1013v1, d, ARRAY_SIZE(d)); \
+		msleep(10); \
 	}
 
 static void d350t1013v1_init_sequence(struct d350t1013v1 *d350t1013v1)
@@ -283,7 +284,7 @@ static int d350t1013v1_dsi_probe(struct mipi_dsi_device *dsi)
 	d350t1013v1_mode.vtotal = vtotal;
 
 	dev_info(&dsi->dev, "clock=%d hsync_start=%d hsync_end=%d htotal=%d vsync_start=%d vsync_end=%d vtotal=%d\n",
-		d350t1013v1_mode.clock, 
+		d350t1013v1_mode.clock,
 		d350t1013v1_mode.hsync_start, d350t1013v1_mode.hsync_end, d350t1013v1_mode.htotal,
 		d350t1013v1_mode.vsync_start, d350t1013v1_mode.vsync_end, d350t1013v1_mode.vtotal
 	);
