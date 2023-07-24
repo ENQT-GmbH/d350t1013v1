@@ -47,8 +47,11 @@ static inline int d350t1013v1_dsi_write(struct d350t1013v1 *d350t1013v1, const v
 #define D350T1013V1_DSI(d350t1013v1, seq...) \
 	{ \
 		const u8 d[] = { seq };	\
-		d350t1013v1_dsi_write(d350t1013v1, d, ARRAY_SIZE(d)); \
-		msleep(10); \
+		int i; \
+		for (i = 0; i < 10; i++) { \
+			d350t1013v1_dsi_write(d350t1013v1, d, ARRAY_SIZE(d)); \
+			msleep(10); \
+		} \
 	}
 
 static void d350t1013v1_init_sequence(struct d350t1013v1 *d350t1013v1)
