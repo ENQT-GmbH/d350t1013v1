@@ -263,7 +263,7 @@ static const struct d350t1013v1_panel_desc d350t1013v1_desc = {
 	.lanes = 2,
 	.flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_CLOCK_NON_CONTINUOUS |
 			MIPI_DSI_MSG_USE_LPM,
-	.format = MIPI_DSI_FMT_RGB565,
+	.format = MIPI_DSI_FMT_RGB888,
 	.supply_names = d350t1013v1_supply_names,
 	.num_supplies = ARRAY_SIZE(d350t1013v1_supply_names),
 };
