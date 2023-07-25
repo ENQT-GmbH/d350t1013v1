@@ -47,11 +47,7 @@ static inline int d350t1013v1_dsi_write(struct d350t1013v1 *d350t1013v1, const v
 #define D350T1013V1_DSI(d350t1013v1, seq...) \
 	{ \
 		const u8 d[] = { seq };	\
-		int i; \
-		for (i = 0; i < 10; i++) { \
-			d350t1013v1_dsi_write(d350t1013v1, d, ARRAY_SIZE(d)); \
-			msleep(10); \
-		} \
+		d350t1013v1_dsi_write(d350t1013v1, d, ARRAY_SIZE(d)); \
 	}
 
 static void d350t1013v1_init_sequence(struct d350t1013v1 *d350t1013v1)
@@ -60,6 +56,7 @@ static void d350t1013v1_init_sequence(struct d350t1013v1 *d350t1013v1)
 
 	D350T1013V1_DSI(d350t1013v1, 0xFF, 0x77, 0x01, 0x00, 0x00, 0x13);
 	D350T1013V1_DSI(d350t1013v1, 0xEF, 0x08);
+
 	D350T1013V1_DSI(d350t1013v1, 0xFF, 0x77, 0x01, 0x00, 0x00, 0x10);
 	D350T1013V1_DSI(d350t1013v1, 0xC0, 0x63, 0x00);
 	D350T1013V1_DSI(d350t1013v1, 0xC1, 0x10, 0x02);
@@ -69,6 +66,7 @@ static void d350t1013v1_init_sequence(struct d350t1013v1 *d350t1013v1)
 		0x02, 0x0D, 0x07, 0x21, 0x04, 0x53, 0x11, 0x6A, 0x32, 0x1F);
 	D350T1013V1_DSI(d350t1013v1, 0xB1, 0xC0, 0x87, 0xCF, 0x0C, 0x10, 0x06,
 		0x00, 0x03, 0x08, 0x1D, 0x06, 0x54, 0x12, 0xE6, 0xEC, 0x0F);
+
 	D350T1013V1_DSI(d350t1013v1, 0xFF, 0x77, 0x01, 0x00, 0x00, 0x11);
 	D350T1013V1_DSI(d350t1013v1, 0xB0, 0x5D);
 	D350T1013V1_DSI(d350t1013v1, 0xB1, 0x62);
@@ -104,6 +102,8 @@ static void d350t1013v1_init_sequence(struct d350t1013v1 *d350t1013v1)
 	D350T1013V1_DSI(d350t1013v1, 0xEF, 0x08, 0x08, 0x08, 0x40, 0x3F, 0x64);
 	D350T1013V1_DSI(d350t1013v1, 0xFF, 0x77, 0x01, 0x00, 0x00, 0x13);
 	D350T1013V1_DSI(d350t1013v1, 0xE8, 0x00, 0x0E);
+ 	msleep(200);
+
 	D350T1013V1_DSI(d350t1013v1, 0xFF, 0x77, 0x01, 0x00, 0x00, 0x00);
 	D350T1013V1_DSI(d350t1013v1, 0x11);
 	msleep(200);
@@ -114,6 +114,7 @@ static void d350t1013v1_init_sequence(struct d350t1013v1 *d350t1013v1)
 
 	D350T1013V1_DSI(d350t1013v1, 0xE8, 0x00, 0x00);
 	D350T1013V1_DSI(d350t1013v1, 0xFF, 0x77, 0x01, 0x00, 0x00, 0x00);
+
 	D350T1013V1_DSI(d350t1013v1, 0x3A, 0x50);
 	msleep(200);
 }
@@ -124,25 +125,26 @@ static int d350t1013v1_prepare(struct drm_panel *panel)
 	int ret;
 	u8 ids[3];
 
+	gpiod_set_value(d350t1013v1->reset, 0);
+
 	ret = regulator_bulk_enable(d350t1013v1->desc->num_supplies,
 				    d350t1013v1->supplies);
 	if (ret < 0)
 		return ret;
+	msleep(250);
 
-	gpiod_set_value(d350t1013v1->reset, 0);
-	msleep(150);
 	gpiod_set_value(d350t1013v1->reset, 1);
-	msleep(150);
+	msleep(250);
 
 	ret = mipi_dsi_dcs_soft_reset(d350t1013v1->dsi);
 	if (ret < 0)
 		return ret;
-	msleep(150);
+	msleep(100);
 
 	ret = mipi_dsi_dcs_exit_sleep_mode(d350t1013v1->dsi);
 	if (ret < 0)
 		return ret;
-	msleep(150);
+	msleep(100);
 
 	/* Reading the display id ensures that the DSI link is working. */
 	ret = mipi_dsi_dcs_read(d350t1013v1->dsi, MIPI_DCS_GET_DISPLAY_ID,
@@ -237,23 +239,6 @@ static struct drm_display_mode d350t1013v1_mode = {
 	.type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
 };
 
-static uint clock = 25000;
-module_param(clock, uint, 0);
-
-static uint hsync_start = 480 + 50;
-module_param(hsync_start, uint, 0);
-static uint hsync_end = 480 + 50 + 16;
-module_param(hsync_end, uint, 0);
-static uint htotal = 480 + 50 + 16 + 2;
-module_param(htotal, uint, 0);
-
-static uint vsync_start = 800 + 16;
-module_param(vsync_start, uint, 0);
-static uint vsync_end = 800 + 16 + 14;
-module_param(vsync_end, uint, 0);
-static uint vtotal = 800 + 16 + 14 + 2;
-module_param(vtotal, uint, 0);
-
 static const char * const d350t1013v1_supply_names[] = {
 	"vcc",
 };
@@ -261,8 +246,8 @@ static const char * const d350t1013v1_supply_names[] = {
 static const struct d350t1013v1_panel_desc d350t1013v1_desc = {
 	.mode = &d350t1013v1_mode,
 	.lanes = 2,
-	.flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_CLOCK_NON_CONTINUOUS |
-			MIPI_DSI_MSG_USE_LPM,
+	.flags = MIPI_DSI_MODE_VIDEO |  MIPI_DSI_CLOCK_NON_CONTINUOUS |
+			MIPI_DSI_MODE_LPM,
 	.format = MIPI_DSI_FMT_RGB888,
 	.supply_names = d350t1013v1_supply_names,
 	.num_supplies = ARRAY_SIZE(d350t1013v1_supply_names),
@@ -277,20 +262,6 @@ static int d350t1013v1_dsi_probe(struct mipi_dsi_device *dsi)
 	d350t1013v1 = devm_kzalloc(&dsi->dev, sizeof(*d350t1013v1), GFP_KERNEL);
 	if (!d350t1013v1)
 		return -ENOMEM;
-
-	d350t1013v1_mode.clock = clock;
-	d350t1013v1_mode.hsync_start = hsync_start;
-	d350t1013v1_mode.hsync_end = hsync_end;
-	d350t1013v1_mode.htotal = htotal;
-	d350t1013v1_mode.vsync_start = vsync_start;
-	d350t1013v1_mode.vsync_end = vsync_end;
-	d350t1013v1_mode.vtotal = vtotal;
-
-	dev_info(&dsi->dev, "clock=%d hsync_start=%d hsync_end=%d htotal=%d vsync_start=%d vsync_end=%d vtotal=%d\n",
-		d350t1013v1_mode.clock,
-		d350t1013v1_mode.hsync_start, d350t1013v1_mode.hsync_end, d350t1013v1_mode.htotal,
-		d350t1013v1_mode.vsync_start, d350t1013v1_mode.vsync_end, d350t1013v1_mode.vtotal
-	);
 
 	desc = of_device_get_match_data(&dsi->dev);
 	dsi->mode_flags = desc->flags;
@@ -333,14 +304,12 @@ static int d350t1013v1_dsi_probe(struct mipi_dsi_device *dsi)
 	return mipi_dsi_attach(dsi);
 }
 
-static int d350t1013v1_dsi_remove(struct mipi_dsi_device *dsi)
+static void d350t1013v1_dsi_remove(struct mipi_dsi_device *dsi)
 {
 	struct d350t1013v1 *d350t1013v1 = mipi_dsi_get_drvdata(dsi);
 
 	mipi_dsi_detach(dsi);
 	drm_panel_remove(&d350t1013v1->panel);
-
-	return 0;
 }
 
 static const struct of_device_id d350t1013v1_of_match[] = {
