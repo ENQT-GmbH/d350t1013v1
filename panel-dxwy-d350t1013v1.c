@@ -288,6 +288,12 @@ static int d350t1013v1_dsi_probe(struct mipi_dsi_device *dsi)
 		return PTR_ERR(d350t1013v1->reset);
 	}
 
+#ifdef RPI_KERNEL
+	/* Raspberry Pi downstream kernels require this to be set for the
+	   DSI interface to be initialized. */
+	d350t1013v1->panel.prepare_upstream_first = true;
+#endif
+
 	drm_panel_init(&d350t1013v1->panel, &dsi->dev, &d350t1013v1_funcs,
 		       DRM_MODE_CONNECTOR_DSI);
 
