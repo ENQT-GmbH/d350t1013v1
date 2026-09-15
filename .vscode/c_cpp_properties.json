@@ -4,12 +4,18 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/../../build-netztester2/build/linux-custom/include/",
-                "${workspaceFolder}/../../build-netztester2/build/linux-custom/arch/arm64/include/",
-                "${workspaceFolder}/../../build-netztester2/build/linux-custom/arch/arm64/include/generated",
-                "${workspaceFolder}/../../build-netztester2/build/linux-custom/arch/arm64/mach-s3c24xx/include"
+                "${workspaceFolder}/../../build-netztester2/build/linux-6.1/include/",
+                "${workspaceFolder}/../../build-netztester2/build/linux-6.1/include/uapi/",
+                "${workspaceFolder}/../../build-netztester2/build/linux-6.1/include/generated/",
+                "${workspaceFolder}/../../build-netztester2/build/linux-6.1/arch/arm64/include/",
+                "${workspaceFolder}/../../build-netztester2/build/linux-6.1/arch/arm64/include/generated/",
+                "${workspaceFolder}/../../build-netztester2/build/linux-6.1/arch/arm64/include/uapi/"
             ],
-            "defines": [],
+            "defines": [
+                "__KERNEL__",
+                "MODULE",
+                "__linux__"
+            ],
             "cStandard": "c11",
             "intelliSenseMode": "gcc-arm64"
         }

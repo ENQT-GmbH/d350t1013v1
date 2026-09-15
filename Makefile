@@ -1,4 +1,5 @@
-obj-m += panel-dxwy-d350t1013v1.o
+obj-m += panel-dxwy-d350t1013v1.o 
+obj-m += panel-sitronix-st7703.o
 
 all:
 	make -C ${LINUX_DIR} M=$(PWD) modules
