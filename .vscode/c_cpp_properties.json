@@ -4,12 +4,12 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${env:HOME}/raumscan-os/build-raumscan1/build/linux-custom/include/",
-                "${env:HOME}/raumscan-os/build-raumscan1/build/linux-custom/include/uapi/",
-                "${env:HOME}/raumscan-os/build-raumscan1/build/linux-custom/include/generated/",
-                "${env:HOME}/raumscan-os/build-raumscan1/build/linux-custom/arch/arm64/include/",
-                "${env:HOME}/raumscan-os/build-raumscan1/build/linux-custom/arch/arm64/include/generated/",
-                "${env:HOME}/raumscan-os/build-raumscan1/build/linux-custom/arch/arm64/include/uapi/"
+                "${workspaceFolder}/../../build-netztester2/build/linux-6.1/include/",
+                "${workspaceFolder}/../../build-netztester2/build/linux-6.1/include/uapi/",
+                "${workspaceFolder}/../../build-netztester2/build/linux-6.1/include/generated/",
+                "${workspaceFolder}/../../build-netztester2/build/linux-6.1/arch/arm64/include/",
+                "${workspaceFolder}/../../build-netztester2/build/linux-6.1/arch/arm64/include/generated/",
+                "${workspaceFolder}/../../build-netztester2/build/linux-6.1/arch/arm64/include/uapi/"
             ],
             "defines": [
                 "__KERNEL__",
